@@ -1,13 +1,23 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
-// Registro de novo usuário
 const registerUser = async (req, res) => {
   const { nome, telefone, email, instituicao_ensino, senha } = req.body;
 
-  try {
-    const hashedPassword = await bcrypt.hash(senha, 10);
+  console.log('Dados recebidos no backend:', req.body); // Adicione isso para ver os dados
 
+  try {
+    // Verifica se o usuário já existe
+    const userExists = await User.findOne({ where: { email } });
+    if (userExists) {
+      return res.status(400).json({ message: 'Usuário já registrado' });
+    }
+
+    // Criptografar a senha
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(senha, salt);
+
+    // Criar um novo usuário
     const newUser = await User.create({
       nome,
       telefone,
@@ -16,11 +26,13 @@ const registerUser = async (req, res) => {
       senha: hashedPassword,
     });
 
-    res.status(201).json({ message: 'Usuário registrado com sucesso!' });
+    res.status(201).json({ message: 'Usuário registrado com sucesso', user: newUser });
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao registrar o usuário', error });
+    console.error('Erro no backend:', error); // Verificar o erro no backend
+    res.status(500).json({ message: 'Erro no servidor' });
   }
 };
+
 
 // Login do usuário com sessão
 const loginUser = async (req, res) => {
