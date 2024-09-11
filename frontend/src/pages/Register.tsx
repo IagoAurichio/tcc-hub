@@ -26,7 +26,7 @@ const Register: React.FC = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('/api/users/register', formData);
+            const response = await axios.post('/register', formData);
             alert(response.data.message);
         } catch (error) {
             alert('Erro ao registrar');

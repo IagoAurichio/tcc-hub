@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const session = require('express-session');
 const userRoutes = require('./routes/userRoutes');
-const connectDB = require('./config/db');
+const {connectDB} = require('./config/db');
 
 // Carregar variáveis de ambiente
 dotenv.config();
